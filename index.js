@@ -36,7 +36,7 @@ async function run() {
     app.post("/api", async (req, res) => {
       const doc=req.body
        const result =await api.insertOne(doc);
-      
+      console.log(result);
        res.send(result);
      });
     
@@ -48,7 +48,26 @@ async function run() {
         
      })
      
-     
+     app.put("/api/:id", async (req, res) => {
+        const id = req.params.id;
+        const updatedData = req.body;
+    
+        try {
+            const result = await api.updateOne({ _id: ObjectId(id) }, { $set: updatedData });
+            console.log(result);
+    
+            if (result.modifiedCount === 1) {
+                res.status(200).json({ message: "Data updated successfully" });
+            } else {
+                res.status(404).json({ message: "Data not found" });
+            }
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: "Internal server error" });
+        }
+    });
+    
+  
   } 
   finally {
     // await client.close();
