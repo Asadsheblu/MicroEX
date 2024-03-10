@@ -101,6 +101,23 @@ async function run() {
         res.status(500).json({ message: "Internal server error" });
       }
     });
+    app.delete("/api/:id", async (req, res) => {
+        const id = req.params.id;
+      
+        try {
+          const result = await api.deleteOne({ _id: new ObjectId(id) });
+          console.log(result);
+      
+          if (result.deletedCount === 1) {
+            res.status(200).json({ message: "Data deleted successfully" });
+          } else {
+            res.status(404).json({ message: "Data not found" });
+          }
+        } catch (error) {
+          console.error(error);
+          res.status(500).json({ message: "Internal server error" });
+        }
+      });
   } finally {
     // await client.close();
   }
