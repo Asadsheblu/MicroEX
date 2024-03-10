@@ -40,22 +40,25 @@ async function run() {
        res.send(result);
      });
     
-     app.get("/api",async(req,res)=>{
-      const query={}
-        const result=api.find(query)
-        const post=await result.toArray()
-        res.send(post)
-        
-     })
      
-     app.put("/api/:id", async (req, res) => {
+     app.get("/api", async (req, res) => {
+        try {
+            const result = await collection.find({}).toArray();
+            res.json(result);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: "Internal server error" });
+        }
+    });
+
+    app.put("/api/:id", async (req, res) => {
         const id = req.params.id;
         const updatedData = req.body;
-    
+
         try {
-            const result = await api.updateOne({ _id: ObjectId(id) }, { $set: updatedData });
+            const result = await collection.updateOne({ _id: ObjectId(id) }, { $set: updatedData });
             console.log(result);
-    
+
             if (result.modifiedCount === 1) {
                 res.status(200).json({ message: "Data updated successfully" });
             } else {
@@ -66,8 +69,6 @@ async function run() {
             res.status(500).json({ message: "Internal server error" });
         }
     });
-    
-  
   } 
   finally {
     // await client.close();
